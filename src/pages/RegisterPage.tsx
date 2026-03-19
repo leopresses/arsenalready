@@ -2,18 +2,27 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Package } from "lucide-react";
+import { toast } from "sonner";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
   const { register } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    register(name, email, password);
-    navigate("/app");
+    setLoading(true);
+    const { error } = await register(name, email, password);
+    setLoading(false);
+    if (error) {
+      toast.error(error);
+    } else {
+      toast.success("Conta criada! Verifique seu email para confirmar.");
+      navigate("/app");
+    }
   };
 
   return (
@@ -43,11 +52,11 @@ export default function RegisterPage() {
             <label className="text-sm font-medium text-foreground mb-1.5 block">Senha</label>
             <input type="password" value={password} onChange={e => setPassword(e.target.value)}
               className="w-full px-3 py-2.5 bg-card border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring/20 focus:border-primary/50"
-              placeholder="Mín. 8 caracteres" required />
+              placeholder="Mín. 6 caracteres" required minLength={6} />
           </div>
-          <button type="submit"
-            className="w-full bg-foreground text-background py-2.5 rounded-lg text-sm font-medium hover:bg-primary transition-colors">
-            Criar Conta Grátis
+          <button type="submit" disabled={loading}
+            className="w-full bg-foreground text-background py-2.5 rounded-lg text-sm font-medium hover:bg-primary transition-colors disabled:opacity-50">
+            {loading ? 'Criando...' : 'Criar Conta Grátis'}
           </button>
         </form>
         <p className="text-center text-sm text-muted-foreground mt-6">

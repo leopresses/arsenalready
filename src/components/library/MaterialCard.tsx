@@ -1,7 +1,7 @@
 import { Copy, Star, Lock, Eye } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { Material } from "@/data/mockData";
+import type { Material } from "@/hooks/useMaterials";
 import { toast } from "sonner";
 
 interface MaterialCardProps {
@@ -10,13 +10,13 @@ interface MaterialCardProps {
 
 export function MaterialCard({ material }: MaterialCardProps) {
   const { isPremium, favorites, toggleFavorite } = useAuth();
-  const isLocked = material.planRequired === 'premium' && !isPremium;
+  const isLocked = material.plan_required === 'premium' && !isPremium;
   const isFavorited = favorites.includes(material.id);
 
   const handleCopy = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    navigator.clipboard.writeText(material.content);
+    if (material.content) navigator.clipboard.writeText(material.content);
     toast.success("Copiado! Agora é só adaptar e lucrar. 🚀");
   };
 
@@ -35,12 +35,12 @@ export function MaterialCard({ material }: MaterialCardProps) {
       <div className="flex justify-between items-start mb-4">
         <span
           className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md ${
-            material.planRequired === 'premium'
+            material.plan_required === 'premium'
               ? 'bg-premium/10 text-premium-foreground border border-premium/20'
               : 'bg-secondary text-muted-foreground'
           }`}
         >
-          {material.planRequired === 'premium' ? '⭐ Premium' : 'Gratuito'}
+          {material.plan_required === 'premium' ? '⭐ Premium' : 'Gratuito'}
         </span>
         <button
           onClick={handleFavorite}
@@ -55,12 +55,12 @@ export function MaterialCard({ material }: MaterialCardProps) {
           {material.title}
         </h3>
         <p className="text-muted-foreground text-sm line-clamp-2 mb-4">
-          {material.shortDescription}
+          {material.short_description}
         </p>
       </div>
 
       <div className="flex flex-wrap gap-1.5 mb-4">
-        {material.tags.slice(0, 3).map(tag => (
+        {(material.tags || []).slice(0, 3).map(tag => (
           <span key={tag} className="text-[11px] text-muted-foreground bg-secondary px-2 py-0.5 rounded-md">
             {tag}
           </span>

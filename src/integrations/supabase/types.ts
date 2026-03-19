@@ -14,7 +14,261 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      categories: {
+        Row: {
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          material_count: number
+          name: string
+          slug: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          material_count?: number
+          name: string
+          slug: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          material_count?: number
+          name?: string
+          slug?: string
+        }
+        Relationships: []
+      }
+      downloads: {
+        Row: {
+          created_at: string
+          id: string
+          material_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          material_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          material_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "downloads_material_id_fkey"
+            columns: ["material_id"]
+            isOneToOne: false
+            referencedRelation: "materials"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      favorites: {
+        Row: {
+          created_at: string
+          id: string
+          material_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          material_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          material_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "favorites_material_id_fkey"
+            columns: ["material_id"]
+            isOneToOne: false
+            referencedRelation: "materials"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      kit_items: {
+        Row: {
+          id: string
+          kit_id: string
+          material_id: string
+        }
+        Insert: {
+          id?: string
+          kit_id: string
+          material_id: string
+        }
+        Update: {
+          id?: string
+          kit_id?: string
+          material_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "kit_items_kit_id_fkey"
+            columns: ["kit_id"]
+            isOneToOne: false
+            referencedRelation: "kits"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "kit_items_material_id_fkey"
+            columns: ["material_id"]
+            isOneToOne: false
+            referencedRelation: "materials"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      kits: {
+        Row: {
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          name: string
+          plan_required: string
+          slug: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name: string
+          plan_required?: string
+          slug: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name?: string
+          plan_required?: string
+          slug?: string
+        }
+        Relationships: []
+      }
+      materials: {
+        Row: {
+          category: string
+          category_id: string | null
+          content: string | null
+          created_at: string
+          featured: boolean | null
+          full_description: string | null
+          id: string
+          instructions: string | null
+          objective: string | null
+          plan_required: string
+          published_at: string | null
+          short_description: string | null
+          slug: string
+          subcategory: string | null
+          tags: string[] | null
+          tips: string | null
+          title: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          category_id?: string | null
+          content?: string | null
+          created_at?: string
+          featured?: boolean | null
+          full_description?: string | null
+          id?: string
+          instructions?: string | null
+          objective?: string | null
+          plan_required?: string
+          published_at?: string | null
+          short_description?: string | null
+          slug: string
+          subcategory?: string | null
+          tags?: string[] | null
+          tips?: string | null
+          title: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          category_id?: string | null
+          content?: string | null
+          created_at?: string
+          featured?: boolean | null
+          full_description?: string | null
+          id?: string
+          instructions?: string | null
+          objective?: string | null
+          plan_required?: string
+          published_at?: string | null
+          short_description?: string | null
+          slug?: string
+          subcategory?: string | null
+          tags?: string[] | null
+          tips?: string | null
+          title?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "materials_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          id: string
+          name: string | null
+          plan: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          id?: string
+          name?: string | null
+          plan?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          id?: string
+          name?: string | null
+          plan?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

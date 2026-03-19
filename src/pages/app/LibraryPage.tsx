@@ -1,9 +1,10 @@
 import { useState, useMemo } from "react";
-import { materials, categories } from "@/data/mockData";
+import { useMaterials, useCategories } from "@/hooks/useMaterials";
 import { MaterialCard } from "@/components/library/MaterialCard";
 import { SearchBar } from "@/components/library/SearchBar";
 import { FilterChip } from "@/components/library/FilterChip";
 import { EmptyState } from "@/components/library/EmptyState";
+import { SkeletonCard } from "@/components/library/SkeletonCard";
 
 const types = ['Todos', 'script', 'prompt', 'copy', 'template', 'checklist'];
 const plans = ['Todos', 'free', 'premium'];
@@ -14,15 +15,18 @@ export default function LibraryPage() {
   const [selectedType, setSelectedType] = useState("Todos");
   const [selectedPlan, setSelectedPlan] = useState("Todos");
 
+  const { data: materials = [], isLoading } = useMaterials();
+  const { data: categories = [] } = useCategories();
+
   const filtered = useMemo(() => {
     return materials.filter(m => {
-      const matchSearch = !search || m.title.toLowerCase().includes(search.toLowerCase()) || m.shortDescription.toLowerCase().includes(search.toLowerCase()) || m.tags.some(t => t.toLowerCase().includes(search.toLowerCase()));
+      const matchSearch = !search || m.title.toLowerCase().includes(search.toLowerCase()) || (m.short_description || '').toLowerCase().includes(search.toLowerCase()) || (m.tags || []).some(t => t.toLowerCase().includes(search.toLowerCase()));
       const matchCategory = selectedCategory === 'Todos' || m.category === selectedCategory;
       const matchType = selectedType === 'Todos' || m.type === selectedType;
-      const matchPlan = selectedPlan === 'Todos' || m.planRequired === selectedPlan;
+      const matchPlan = selectedPlan === 'Todos' || m.plan_required === selectedPlan;
       return matchSearch && matchCategory && matchType && matchPlan;
     });
-  }, [search, selectedCategory, selectedType, selectedPlan]);
+  }, [search, selectedCategory, selectedType, selectedPlan, materials]);
 
   return (
     <div className="space-y-6 pt-8 lg:pt-0">
@@ -52,7 +56,11 @@ export default function LibraryPage() {
         </div>
       </div>
 
-      {filtered.length > 0 ? (
+      {isLoading ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[1, 2, 3, 4, 5, 6].map(i => <SkeletonCard key={i} />)}
+        </div>
+      ) : filtered.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filtered.map(m => <MaterialCard key={m.id} material={m} />)}
         </div>
