@@ -1,13 +1,18 @@
 import { useParams, Link } from "react-router-dom";
-import { materials } from "@/data/mockData";
+import { useMaterial } from "@/hooks/useMaterials";
 import { useAuth } from "@/contexts/AuthContext";
 import { Copy, Star, ArrowLeft, Lock, Download } from "lucide-react";
 import { toast } from "sonner";
+import { SkeletonCard } from "@/components/library/SkeletonCard";
 
 export default function MaterialDetailPage() {
   const { slug } = useParams();
   const { isPremium, favorites, toggleFavorite } = useAuth();
-  const material = materials.find(m => m.slug === slug);
+  const { data: material, isLoading } = useMaterial(slug);
+
+  if (isLoading) {
+    return <div className="space-y-6 pt-8 lg:pt-0 max-w-3xl"><SkeletonCard /><SkeletonCard /></div>;
+  }
 
   if (!material) {
     return (
@@ -18,11 +23,11 @@ export default function MaterialDetailPage() {
     );
   }
 
-  const isLocked = material.planRequired === 'premium' && !isPremium;
+  const isLocked = material.plan_required === 'premium' && !isPremium;
   const isFavorited = favorites.includes(material.id);
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(material.content);
+    if (material.content) navigator.clipboard.writeText(material.content);
     toast.success("Copiado! Agora é só adaptar e lucrar. 🚀");
   };
 
@@ -36,9 +41,9 @@ export default function MaterialDetailPage() {
         <div>
           <div className="flex items-center gap-2 mb-2">
             <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md ${
-              material.planRequired === 'premium' ? 'bg-premium/10 text-premium-foreground border border-premium/20' : 'bg-secondary text-muted-foreground'
+              material.plan_required === 'premium' ? 'bg-premium/10 text-premium-foreground border border-premium/20' : 'bg-secondary text-muted-foreground'
             }`}>
-              {material.planRequired === 'premium' ? '⭐ Premium' : 'Gratuito'}
+              {material.plan_required === 'premium' ? '⭐ Premium' : 'Gratuito'}
             </span>
             <span className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider bg-secondary px-2 py-1 rounded-md">
               {material.type}
@@ -54,21 +59,21 @@ export default function MaterialDetailPage() {
         </button>
       </div>
 
-      <p className="text-muted-foreground">{material.fullDescription}</p>
+      <p className="text-muted-foreground">{material.full_description}</p>
 
       <div className="flex flex-wrap gap-1.5">
-        {material.tags.map(tag => (
+        {(material.tags || []).map(tag => (
           <span key={tag} className="text-xs text-muted-foreground bg-secondary px-2.5 py-1 rounded-md">{tag}</span>
         ))}
       </div>
 
-      {/* Instructions */}
-      <div className="bg-card border border-border rounded-xl p-5">
-        <h2 className="font-semibold text-foreground mb-3">📋 Como usar</h2>
-        <div className="text-sm text-muted-foreground whitespace-pre-line">{material.instructions}</div>
-      </div>
+      {material.instructions && (
+        <div className="bg-card border border-border rounded-xl p-5">
+          <h2 className="font-semibold text-foreground mb-3">📋 Como usar</h2>
+          <div className="text-sm text-muted-foreground whitespace-pre-line">{material.instructions}</div>
+        </div>
+      )}
 
-      {/* Content */}
       <div className="relative">
         <div className="bg-card border border-border rounded-xl p-5">
           <div className="flex items-center justify-between mb-4">
@@ -79,8 +84,7 @@ export default function MaterialDetailPage() {
                   className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-foreground text-background text-sm font-medium rounded-lg hover:bg-primary transition-colors">
                   <Copy size={14} /> Copiar
                 </button>
-                <button
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-border text-sm font-medium rounded-lg hover:bg-secondary text-foreground transition-colors">
+                <button className="inline-flex items-center gap-1.5 px-3 py-1.5 border border-border text-sm font-medium rounded-lg hover:bg-secondary text-foreground transition-colors">
                   <Download size={14} /> Baixar
                 </button>
               </div>

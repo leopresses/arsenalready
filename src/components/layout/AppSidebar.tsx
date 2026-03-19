@@ -14,7 +14,7 @@ import {
   FileText,
   CheckSquare,
 } from "lucide-react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
 
@@ -35,14 +35,21 @@ const categoryNav = [
 ];
 
 export function AppSidebar() {
-  const { user, logout } = useAuth();
+  const { profile, logout } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const isActive = (path: string) => {
     if (path === "/app") return location.pathname === "/app";
     return location.pathname.startsWith(path);
+  };
+
+  const handleLogout = async () => {
+    await logout();
+    setMobileOpen(false);
+    navigate('/login');
   };
 
   const sidebarContent = (
@@ -106,7 +113,7 @@ export function AppSidebar() {
       </nav>
 
       <div className="p-3 border-t border-sidebar-border space-y-1">
-        {!collapsed && user?.plan === 'free' && (
+        {!collapsed && profile?.plan === 'free' && (
           <NavLink
             to="/app/upgrade"
             onClick={() => setMobileOpen(false)}
@@ -127,7 +134,7 @@ export function AppSidebar() {
           {!collapsed && <span>Minha Conta</span>}
         </NavLink>
         <button
-          onClick={() => { logout(); setMobileOpen(false); }}
+          onClick={handleLogout}
           className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-sm font-medium text-sidebar-foreground hover:bg-sidebar-accent/60 transition-colors w-full"
         >
           <LogOut size={18} strokeWidth={1.5} />
@@ -139,7 +146,6 @@ export function AppSidebar() {
 
   return (
     <>
-      {/* Mobile trigger */}
       <button
         onClick={() => setMobileOpen(true)}
         className="lg:hidden fixed top-4 left-4 z-50 p-2 bg-card border border-border rounded-lg shadow-premium"
@@ -147,7 +153,6 @@ export function AppSidebar() {
         <Menu size={20} className="text-foreground" />
       </button>
 
-      {/* Mobile overlay */}
       {mobileOpen && (
         <div
           className="lg:hidden fixed inset-0 bg-foreground/20 z-40"
@@ -155,7 +160,6 @@ export function AppSidebar() {
         />
       )}
 
-      {/* Sidebar */}
       <aside
         className={`fixed lg:sticky top-0 left-0 h-screen bg-sidebar border-r border-sidebar-border z-50 transition-all duration-200 flex-shrink-0 ${
           mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'

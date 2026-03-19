@@ -1,15 +1,28 @@
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 export default function ProfilePage() {
-  const { user } = useAuth();
-  const [name, setName] = useState(user?.name || "");
-  const [email] = useState(user?.email || "");
+  const { profile, user, refreshProfile } = useAuth();
+  const [name, setName] = useState(profile?.name || "");
+  const [loading, setLoading] = useState(false);
 
-  const handleSave = (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success("Perfil atualizado com sucesso!");
+    if (!user) return;
+    setLoading(true);
+    const { error } = await supabase
+      .from('profiles')
+      .update({ name })
+      .eq('user_id', user.id);
+    setLoading(false);
+    if (error) {
+      toast.error("Erro ao salvar.");
+    } else {
+      await refreshProfile();
+      toast.success("Perfil atualizado com sucesso!");
+    }
   };
 
   return (
@@ -29,12 +42,12 @@ export default function ProfilePage() {
           </div>
           <div>
             <label className="text-sm font-medium text-foreground mb-1.5 block">Email</label>
-            <input type="email" value={email} disabled
+            <input type="email" value={user?.email || ''} disabled
               className="w-full px-3 py-2.5 bg-secondary border border-border rounded-lg text-sm text-muted-foreground" />
           </div>
-          <button type="submit"
-            className="bg-foreground text-background px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-primary transition-colors">
-            Salvar Alterações
+          <button type="submit" disabled={loading}
+            className="bg-foreground text-background px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-primary transition-colors disabled:opacity-50">
+            {loading ? 'Salvando...' : 'Salvar Alterações'}
           </button>
         </form>
       </div>
@@ -43,12 +56,12 @@ export default function ProfilePage() {
         <h2 className="font-semibold text-foreground mb-2">Plano Atual</h2>
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-foreground font-medium">{user?.plan === 'premium' ? 'Premium' : 'Gratuito'}</p>
+            <p className="text-foreground font-medium">{profile?.plan === 'premium' ? 'Premium' : 'Gratuito'}</p>
             <p className="text-muted-foreground text-xs">
-              {user?.plan === 'premium' ? 'Acesso completo à biblioteca' : 'Acesso limitado'}
+              {profile?.plan === 'premium' ? 'Acesso completo à biblioteca' : 'Acesso limitado'}
             </p>
           </div>
-          {user?.plan !== 'premium' && (
+          {profile?.plan !== 'premium' && (
             <a href="/app/upgrade" className="text-sm text-primary hover:underline font-medium">Fazer Upgrade</a>
           )}
         </div>
