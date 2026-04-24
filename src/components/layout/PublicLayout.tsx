@@ -1,5 +1,5 @@
 import { Outlet, Link } from "react-router-dom";
-import { Package } from "lucide-react";
+import logo from "@/assets/logo.png";
 
 export function PublicLayout() {
   return (
@@ -7,10 +7,7 @@ export function PublicLayout() {
       <header className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <Package className="text-primary-foreground" size={18} />
-            </div>
-            <span className="font-semibold text-foreground">Arsenal</span>
+            <img src={logo} alt="Arsenal de Materiais Prontos" className="h-9 w-auto" />
           </Link>
           <nav className="flex items-center gap-4">
             <Link to="/pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Preços</Link>
@@ -26,12 +23,7 @@ export function PublicLayout() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             <div>
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-7 h-7 bg-primary rounded-lg flex items-center justify-center">
-                  <Package className="text-primary-foreground" size={14} />
-                </div>
-                <span className="font-semibold text-foreground text-sm">Arsenal</span>
-              </div>
+              <img src={logo} alt="Arsenal de Materiais Prontos" className="h-8 w-auto mb-4" />
               <p className="text-muted-foreground text-xs">Sua biblioteca de execução imediata.</p>
             </div>
             <div>
