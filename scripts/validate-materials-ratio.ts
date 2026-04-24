@@ -152,8 +152,12 @@ async function main() {
   printTable("Distribuição por CATEGORIA", summarize(rows, (r) => r.category));
   printTable("Distribuição por TIPO", summarize(rows, (r) => r.type));
 
-  if (fix && !ok) await rebalance(rows);
-  else if (!ok) console.log("\nℹ️  Rode com --fix para ajustar automaticamente.");
+  // Verifica se há categoria fora da tolerância
+  const catSummary = summarize(rows, (r) => r.category);
+  const anyCatOff = catSummary.some(([, v]) => Math.abs(v.free / v.total - TARGET_FREE_RATIO) > TOLERANCE);
+
+  if (fix && (!ok || anyCatOff)) await rebalance(rows);
+  else if (!ok || anyCatOff) console.log("\nℹ️  Rode com --fix para ajustar automaticamente (total e/ou categoria).");
 }
 
 main().catch((e) => {
