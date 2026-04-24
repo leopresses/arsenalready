@@ -1,0 +1,1 @@
+UPDATE public.materials SET objective = 'indicação' WHERE objective = 'indicacao';
