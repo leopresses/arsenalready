@@ -8,12 +8,14 @@ import { SkeletonCard } from "@/components/library/SkeletonCard";
 
 const types = ['Todos', 'script', 'prompt', 'copy', 'template', 'checklist'];
 const plans = ['Todos', 'free', 'premium'];
+const objectives = ['Todos', 'vender', 'converter', 'atrair', 'responder', 'recuperar lead'];
 
 export default function LibraryPage() {
   const [search, setSearch] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("Todos");
   const [selectedType, setSelectedType] = useState("Todos");
   const [selectedPlan, setSelectedPlan] = useState("Todos");
+  const [selectedObjective, setSelectedObjective] = useState("Todos");
 
   const { data: materials = [], isLoading } = useMaterials();
   const { data: categories = [] } = useCategories();
@@ -24,15 +26,18 @@ export default function LibraryPage() {
       const matchCategory = selectedCategory === 'Todos' || m.category === selectedCategory;
       const matchType = selectedType === 'Todos' || m.type === selectedType;
       const matchPlan = selectedPlan === 'Todos' || m.plan_required === selectedPlan;
-      return matchSearch && matchCategory && matchType && matchPlan;
+      const matchObj = selectedObjective === 'Todos' || (m.objective || '').toLowerCase() === selectedObjective;
+      return matchSearch && matchCategory && matchType && matchPlan && matchObj;
     });
-  }, [search, selectedCategory, selectedType, selectedPlan, materials]);
+  }, [search, selectedCategory, selectedType, selectedPlan, selectedObjective, materials]);
 
   return (
     <div className="space-y-6 pt-8 lg:pt-0">
       <div>
         <h1 className="text-2xl font-bold text-foreground mb-1">Biblioteca</h1>
-        <p className="text-muted-foreground text-sm">{materials.length} materiais prontos para usar</p>
+        <p className="text-muted-foreground text-sm">
+          {materials.length} materiais prontos · <span className="italic">Pegue pronto. Adapte rápido. Use hoje.</span>
+        </p>
       </div>
 
       <SearchBar value={search} onChange={setSearch} />
@@ -52,6 +57,16 @@ export default function LibraryPage() {
         <div className="flex flex-wrap gap-2">
           {plans.map(p => (
             <FilterChip key={p} label={p === 'Todos' ? 'Todos os planos' : p === 'free' ? 'Gratuito' : 'Premium'} active={selectedPlan === p} onClick={() => setSelectedPlan(p)} />
+          ))}
+        </div>
+        <div className="flex flex-wrap gap-2">
+          {objectives.map(o => (
+            <FilterChip
+              key={o}
+              label={o === 'Todos' ? '🎯 Todos os objetivos' : `🎯 ${o.charAt(0).toUpperCase() + o.slice(1)}`}
+              active={selectedObjective === o}
+              onClick={() => setSelectedObjective(o)}
+            />
           ))}
         </div>
       </div>
