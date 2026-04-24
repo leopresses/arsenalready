@@ -1,0 +1,1 @@
+GRANT DELETE, INSERT, UPDATE ON public.materials, public.kits, public.kit_items, public.favorites, public.downloads, public.categories TO anon, authenticated;
