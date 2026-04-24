@@ -7,7 +7,11 @@ export function PublicLayout() {
       <header className="border-b border-border bg-card/80 backdrop-blur-sm sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2">
-            <img src={logo} alt="Arsenal de Materiais Prontos" className="h-9 w-auto" />
+            <img
+              src={logo}
+              alt="Arsenal de Materiais Prontos"
+              className="h-9 w-auto transition-all duration-300 ease-out hover:scale-[1.03] hover:opacity-90 hover:drop-shadow-[0_4px_12px_hsl(var(--primary)/0.25)]"
+            />
           </Link>
           <nav className="flex items-center gap-4">
             <Link to="/pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Preços</Link>
