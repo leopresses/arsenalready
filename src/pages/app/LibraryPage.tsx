@@ -6,9 +6,27 @@ import { FilterChip } from "@/components/library/FilterChip";
 import { EmptyState } from "@/components/library/EmptyState";
 import { SkeletonCard } from "@/components/library/SkeletonCard";
 
-const types = ['Todos', 'script', 'prompt', 'copy', 'template', 'checklist'];
+const types = ['Todos', 'script', 'prompt', 'copy', 'template', 'checklist', 'sequencia'];
+const typeLabels: Record<string, string> = {
+  Todos: 'Todos os tipos',
+  script: 'Scripts',
+  prompt: 'Prompts',
+  copy: 'Copies',
+  template: 'Templates',
+  checklist: 'Checklists',
+  sequencia: 'Sequências',
+};
 const plans = ['Todos', 'free', 'premium'];
-const objectives = ['Todos', 'vender', 'converter', 'atrair', 'responder', 'recuperar lead'];
+const objectives = [
+  'Todos',
+  'vender',
+  'converter',
+  'atrair',
+  'engajar',
+  'responder',
+  'recuperar lead',
+  'organizar',
+];
 
 export default function LibraryPage() {
   const [search, setSearch] = useState("");
@@ -51,7 +69,7 @@ export default function LibraryPage() {
         </div>
         <div className="flex flex-wrap gap-2">
           {types.map(t => (
-            <FilterChip key={t} label={t === 'Todos' ? 'Todos os tipos' : t} active={selectedType === t} onClick={() => setSelectedType(t)} />
+            <FilterChip key={t} label={typeLabels[t] ?? t} active={selectedType === t} onClick={() => setSelectedType(t)} />
           ))}
         </div>
         <div className="flex flex-wrap gap-2">

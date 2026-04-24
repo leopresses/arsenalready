@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import logo from "@/assets/logo.png";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { translateAuthError } from "@/lib/auth-errors";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -16,7 +17,7 @@ export default function ForgotPasswordPage() {
     });
     setLoading(false);
     if (error) {
-      toast.error(error.message);
+      toast.error(translateAuthError(error.message));
     } else {
       toast.success("Email enviado! Verifique sua caixa de entrada.");
     }

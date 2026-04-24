@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import logo from "@/assets/logo.png";
 import { toast } from "sonner";
+import { translateAuthError } from "@/lib/auth-errors";
 
 export default function RegisterPage() {
   const [name, setName] = useState("");
@@ -18,7 +19,7 @@ export default function RegisterPage() {
     const { error } = await register(name, email, password);
     setLoading(false);
     if (error) {
-      toast.error(error);
+      toast.error(translateAuthError(error));
     } else {
       toast.success("Conta criada! Verifique seu email para confirmar.");
       navigate("/app");
