@@ -1,14 +1,16 @@
 import { useParams, Link } from "react-router-dom";
-import { useMaterial } from "@/hooks/useMaterials";
+import { useMaterial, useMaterials } from "@/hooks/useMaterials";
 import { useAuth } from "@/contexts/AuthContext";
 import { Copy, Star, ArrowLeft, Lock, Download } from "lucide-react";
 import { toast } from "sonner";
 import { SkeletonCard } from "@/components/library/SkeletonCard";
+import { MaterialCard } from "@/components/library/MaterialCard";
 
 export default function MaterialDetailPage() {
   const { slug } = useParams();
   const { isPremium, favorites, toggleFavorite } = useAuth();
   const { data: material, isLoading } = useMaterial(slug);
+  const { data: allMaterials = [] } = useMaterials();
 
   if (isLoading) {
     return <div className="space-y-6 pt-8 lg:pt-0 max-w-3xl"><SkeletonCard /><SkeletonCard /></div>;
@@ -25,6 +27,14 @@ export default function MaterialDetailPage() {
 
   const isLocked = material.plan_required === 'premium' && !isPremium;
   const isFavorited = favorites.includes(material.id);
+
+  // Materiais relacionados: mesma categoria OU mesmo objetivo, exceto ele mesmo
+  const related = allMaterials
+    .filter(m =>
+      m.id !== material.id &&
+      (m.category === material.category || (m.objective && m.objective === material.objective))
+    )
+    .slice(0, 3);
 
   const handleCopy = () => {
     if (material.content) navigator.clipboard.writeText(material.content);
@@ -115,6 +125,16 @@ export default function MaterialDetailPage() {
           </div>
         )}
       </div>
+
+      {related.length > 0 && (
+        <div className="pt-6 border-t border-border">
+          <h2 className="font-semibold text-foreground mb-1">Materiais relacionados</h2>
+          <p className="text-muted-foreground text-xs mb-4 italic">Mais execução, menos enrolação.</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {related.map(m => <MaterialCard key={m.id} material={m} />)}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
