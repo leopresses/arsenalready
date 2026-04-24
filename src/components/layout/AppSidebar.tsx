@@ -56,12 +56,7 @@ export function AppSidebar() {
     <div className="flex flex-col h-full">
       <div className="p-4 flex items-center justify-between border-b border-sidebar-border">
         {!collapsed && (
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-              <Package className="text-primary-foreground" size={18} />
-            </div>
-            <span className="font-semibold text-sidebar-foreground text-sm">Arsenal</span>
-          </div>
+          <img src={logo} alt="Arsenal de Materiais Prontos" className="h-8 w-auto" />
         )}
         <button
           onClick={() => setCollapsed(!collapsed)}
