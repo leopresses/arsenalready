@@ -17,6 +17,7 @@ import {
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { useState } from "react";
+import logo from "@/assets/logo.png";
 
 const mainNav = [
   { title: "Dashboard", url: "/app", icon: LayoutDashboard },
