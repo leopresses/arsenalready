@@ -79,38 +79,55 @@ function printTable(title: string, rows: [string, { free: number; premium: numbe
 }
 
 async function rebalance(rows: Row[]) {
-  const targetFree = Math.round(rows.length * TARGET_FREE_RATIO);
-  const currentFree = rows.filter((r) => r.plan_required === "free").length;
-  const diff = currentFree - targetFree;
-
-  if (diff === 0) {
-    console.log("\n✅ Já está exatamente em 25/75. Nada a ajustar.");
-    return;
+  // Rebalanceia POR CATEGORIA para manter cada bucket próximo de 25/75.
+  const byCat = new Map<string, Row[]>();
+  for (const r of rows) {
+    const arr = byCat.get(r.category) ?? [];
+    arr.push(r);
+    byCat.set(r.category, arr);
   }
 
-  if (diff > 0) {
-    // Excesso de free → promover os mais recentes e não-featured a premium
-    const candidates = rows
-      .filter((r) => r.plan_required === "free" && !r.featured)
-      .sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at))
-      .slice(0, diff);
-    console.log(`\n🔧 Promovendo ${candidates.length} materiais free → premium...`);
-    const ids = candidates.map((c) => c.id);
-    const { error } = await supabase.from("materials").update({ plan_required: "premium" }).in("id", ids);
-    if (error) throw error;
-  } else {
-    // Falta free → liberar premium mais antigos
-    const need = -diff;
-    const candidates = rows
-      .filter((r) => r.plan_required === "premium" && !r.featured)
-      .sort((a, b) => +new Date(a.created_at) - +new Date(b.created_at))
-      .slice(0, need);
-    console.log(`\n🔧 Liberando ${candidates.length} materiais premium → free...`);
-    const ids = candidates.map((c) => c.id);
-    const { error } = await supabase.from("materials").update({ plan_required: "free" }).in("id", ids);
+  let promoted = 0;
+  let released = 0;
+  const promoteIds: string[] = [];
+  const releaseIds: string[] = [];
+
+  for (const [cat, list] of byCat) {
+    const targetFree = Math.round(list.length * TARGET_FREE_RATIO);
+    const currentFree = list.filter((r) => r.plan_required === "free").length;
+    const diff = currentFree - targetFree;
+    if (diff === 0) continue;
+
+    if (diff > 0) {
+      const cands = list
+        .filter((r) => r.plan_required === "free" && !r.featured)
+        .sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at))
+        .slice(0, diff);
+      promoteIds.push(...cands.map((c) => c.id));
+      promoted += cands.length;
+      console.log(`  • ${cat}: free→premium ${cands.length}`);
+    } else {
+      const need = -diff;
+      const cands = list
+        .filter((r) => r.plan_required === "premium" && !r.featured)
+        .sort((a, b) => +new Date(a.created_at) - +new Date(b.created_at))
+        .slice(0, need);
+      releaseIds.push(...cands.map((c) => c.id));
+      released += cands.length;
+      console.log(`  • ${cat}: premium→free ${cands.length}`);
+    }
+  }
+
+  console.log(`\n🔧 Aplicando: ${promoted} → premium, ${released} → free`);
+  if (promoteIds.length) {
+    const { error } = await supabase.from("materials").update({ plan_required: "premium" }).in("id", promoteIds);
     if (error) throw error;
   }
-  console.log("✅ Rebalanceamento aplicado.");
+  if (releaseIds.length) {
+    const { error } = await supabase.from("materials").update({ plan_required: "free" }).in("id", releaseIds);
+    if (error) throw error;
+  }
+  console.log("✅ Rebalanceamento por categoria aplicado.");
 }
 
 async function main() {
