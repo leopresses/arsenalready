@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import logo from "@/assets/logo.png";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { translateAuthError } from "@/lib/auth-errors";
 
 export default function ResetPasswordPage() {
   const [password, setPassword] = useState("");
@@ -23,7 +24,7 @@ export default function ResetPasswordPage() {
     const { error } = await supabase.auth.updateUser({ password });
     setLoading(false);
     if (error) {
-      toast.error(error.message);
+      toast.error(translateAuthError(error.message));
     } else {
       toast.success("Senha atualizada com sucesso!");
       navigate("/app");

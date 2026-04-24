@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import logo from "@/assets/logo.png";
 import { toast } from "sonner";
+import { translateAuthError } from "@/lib/auth-errors";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -17,7 +18,7 @@ export default function LoginPage() {
     const { error } = await login(email, password);
     setLoading(false);
     if (error) {
-      toast.error(error);
+      toast.error(translateAuthError(error));
     } else {
       navigate("/app");
     }
