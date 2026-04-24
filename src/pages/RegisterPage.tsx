@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { Package } from "lucide-react";
+import logo from "@/assets/logo.png";
 import { toast } from "sonner";
 
 export default function RegisterPage() {
@@ -30,7 +30,6 @@ export default function RegisterPage() {
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center mx-auto mb-4">
-            <Package className="text-primary-foreground" size={24} />
           </div>
           <h1 className="text-2xl font-bold text-foreground">Crie sua conta</h1>
           <p className="text-muted-foreground text-sm mt-1">Comece a usar o Arsenal gratuitamente</p>
