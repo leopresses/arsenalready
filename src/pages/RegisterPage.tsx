@@ -29,8 +29,7 @@ export default function RegisterPage() {
     <div className="min-h-[80vh] flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center mx-auto mb-4">
-          </div>
+          <img src={logo} alt="Arsenal de Materiais Prontos" className="h-12 w-auto mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-foreground">Crie sua conta</h1>
           <p className="text-muted-foreground text-sm mt-1">Comece a usar o Arsenal gratuitamente</p>
         </div>

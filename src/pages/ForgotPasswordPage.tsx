@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { Package } from "lucide-react";
+import logo from "@/assets/logo.png";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -26,9 +26,7 @@ export default function ForgotPasswordPage() {
     <div className="min-h-[80vh] flex items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center mx-auto mb-4">
-            <Package className="text-primary-foreground" size={24} />
-          </div>
+          <img src={logo} alt="Arsenal de Materiais Prontos" className="h-12 w-auto mx-auto mb-4" />
           <h1 className="text-2xl font-bold text-foreground">Recuperar senha</h1>
           <p className="text-muted-foreground text-sm mt-1">Enviaremos um link para redefinir sua senha</p>
         </div>
